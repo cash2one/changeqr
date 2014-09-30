@@ -3,7 +3,7 @@
 # @Author: hollay
 # @Date:   2014-09-27 10:23:54
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-09-28 17:09:26
+# @Last Modified time: 2014-09-30 16:59:51
 
 
 class MessageRegister():
@@ -31,6 +31,7 @@ class WechatMessage(dict):
         self.touser = message.pop('ToUserName', None)
         self.fromuser = message.pop('FromUserName', None)
         self.createtime = int(message.pop('CreateTime', 0))
+        self.raw = message.pop('raw', '')
         self.update(message)
 
     def from_xml(self, xml):
@@ -107,7 +108,31 @@ class LinkMessage(WechatMessage):
 class EventMessage(WechatMessage):
 
     def __init__(self, message):
+        # click, view, scancode_push, scancode_waitmsg, pic_sysphoto, pic_photo_or_album, pic_weixin, location_select
         self.event = message.pop('Event')
         self.eventkey = message.pop('EventKey')
+        self.ticket = message.pop('Ticket', None)
+
+        self.latitude = message.pop('Latitude', None)
+        self.longtitude = message.pop('Longtitude', None)
+        self.precision = message.pop('Precision', None)
+
+        self.scaninfo = message.pop('ScanCodeInfo', None)
+        if self.scaninfo:
+            self.scanresult = info['ScanResult']
+            self.scantype = info['ScanType']
+
+        self.picinfo = message.pop('SendPicsInfo', None)
+        if self.picinfo:
+            self.piccount = self.picinfo['Count']
+            self.piclist = self.picinfo['PicList']
+
+        self.locinfo = message.pop('SendLocationInfo', None)
+        if self.locinfo:
+            self.location_x = self.locinfo['Location_X']
+            self.location_y = self.locinfo['Location_Y']
+            self.locscale = self.locinfo['Scale']
+            self.loclabel = self.locinfo['Label']
+            self.locpoi = self.locinfo['Poiname']
 
         super(EventMessage, self).__init__(message)
