@@ -6,7 +6,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-09-28 12:08:33
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-09-30 17:09:26
+# @Last Modified time: 2014-10-09 09:54:01
 
 import hashlib
 import requests
@@ -26,6 +26,7 @@ from settings import token_cache_clazz
 class Wechat():
 
     __version = '1.0'
+    __weixinversion = '2014-10-08'
 
     def __init__(self, token=None, appid=None, appsecret=None):
         '''
@@ -44,6 +45,9 @@ class Wechat():
 
         self._token_cache = token_cache_clazz()
 
+    def version(self):
+        return 'SDK version %s, release at %s' % (self.__version, self.__weixinversion)
+
     def validate(self):
         '''
         验证微信消息真实性
@@ -53,9 +57,6 @@ class Wechat():
         :return: 通过验证返回 True, 未通过验证返回 False
         '''
         self._check_token()
-
-        # TODO:
-        return True
 
         if not self._timestamp or not self._nonce or not self._signature:
             return False
@@ -84,7 +85,7 @@ class Wechat():
 
         return result
 
-    def parse(self, get, data, echo=False):
+    def parse(self, get, data, method='post'):
         '''
         解析微信服务器发送过来的数据并保存类中
         :param get: 微信服务器请求中的URL参数
@@ -96,13 +97,13 @@ class Wechat():
         self._signature = get.get('signature', None)
         self._timestamp = get.get('timestamp', None)
         self._nonce = get.get('nonce', None)
-        self._echostr = get.get('echostr', None)
+        self._echostr = get.get('echostr', '')
 
         # 检查签名有效性
         if not self.validate():
             raise ParseError('签名错误')
 
-        if echo and self._echostr:
+        if method.lower() == 'get':
             return self._echostr
 
         # 解析消息
@@ -117,7 +118,7 @@ class Wechat():
         try:
             doc = minidom.parseString(data)
         except Exception:
-            raise ParseError()
+            raise ParseError('数据解析出错')
 
         result = self._xml2dict(doc.childNodes[0])
 
@@ -131,7 +132,7 @@ class Wechat():
         self.__message.wechat = self
 
         # 处理消息
-        return self.__handler.handle(self.__message)
+        return self.__handler.handle(self.__message) or ''
 
     @property
     def access_token(self):

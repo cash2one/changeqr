@@ -3,7 +3,7 @@
 # @Author: hollay
 # @Date:   2014-09-27 10:23:54
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-09-30 16:59:51
+# @Last Modified time: 2014-10-09 09:52:50
 
 
 class MessageRegister():
@@ -33,6 +33,7 @@ class WechatMessage(dict):
         self.createtime = int(message.pop('CreateTime', 0))
         self.raw = message.pop('raw', '')
         self.update(message)
+        self.msgtype = message.pop('type', 'unknow')
 
     def from_xml(self, xml):
         pass
@@ -119,8 +120,8 @@ class EventMessage(WechatMessage):
 
         self.scaninfo = message.pop('ScanCodeInfo', None)
         if self.scaninfo:
-            self.scanresult = info['ScanResult']
-            self.scantype = info['ScanType']
+            self.scanresult = self.scaninfo['ScanResult']
+            self.scantype = self.scaninfo['ScanType']
 
         self.picinfo = message.pop('SendPicsInfo', None)
         if self.picinfo:

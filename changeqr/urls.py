@@ -9,4 +9,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
+
+
+    url(r'^gateway/$', 'qrcode.views.weixin.gateway', name='gateway'),
 )
