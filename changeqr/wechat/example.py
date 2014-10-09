@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-09-28 12:06:58
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-09-30 17:02:16
+# @Last Modified time: 2014-10-09 16:06:19
 
 import time
 
@@ -15,7 +15,7 @@ from wechat import Wechat
 APP_ID = 'wx359b54263ab9dca2'
 APP_SECRET = 'cb6f31c61fa644783cfab1ae736e5786'
 
-UID = 'oFZijt11OjA4i3Fq1jSjf1agboxw'
+UID = 'oFZijt71j9NzhSqQzVf1_Im3Ucn0'
 
 
 @handler.register('text')
@@ -168,7 +168,15 @@ wechat = Wechat(token='token', appid=APP_ID, appsecret=APP_SECRET)
 # with open('/tmp/voice.amr', 'w') as fp:
 # 	fp.write(ret.content)
 
-ret = wechat.get_user_info(UID)
+# ret = wechat.get_user_info(UID)
 # {u'province': u'\u5317\u4eac', u'city': u'\u6d77\u6dc0', u'subscribe_time': 1412060454, u'headimgurl': u'http://wx.qlogo.cn/mmopen/5pztFxoEeQWnZKPz8FfPGmkmQB1RKp4nicroiaAe8BibtibTfkOaMUaPicpoiaYHvuQQCjzM64a3tXbPftia7N19GGgltlPka2ScfiaY/0', u'language': u'zh_CN', u'openid': u'oFZijt11OjA4i3Fq1jSjf1agboxw', u'country': u'\u4e2d\u56fd', u'remark': u'', u'sex': 1, u'subscribe': 1, u'nickname': u'\u7d2b\u7535\u9752\u971c'}
 
+ret = wechat.send_text_message(UID, 
+u'''1. 菜单1\n
+2. <a href="http://www.baidu.com/" >超链接</a>\n
+3. /::)\n
+4. [呲牙]/呲牙/::D[难过]  /难过
+5. /:bye/:xx/:!!!/:,@!/::8/:,@@/::L/::>/::,@/:,@f/::-S/:?/:,@x/::!/:|-)/::g/:,@o/::d/:,@-D/:,@P/::T/::Q/:--b/::+/::(/::O/::X/::Z/::'(/::-|/::@/::P/::D/::$/::</:8-)/::|
+6. \ue136 \ue138 \ue12f \ue428 \ue341`
+''')
 print ret

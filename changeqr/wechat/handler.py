@@ -3,12 +3,15 @@
 # @Author: Hollay.Yan
 # @Date:   2014-09-27 12:03:29
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-09-28 20:48:25
+# @Last Modified time: 2014-10-09 20:17:05
 
 import time
+import logging
 
 from messages import WechatMessage, TextMessage
 from exception import MessageTypeError
+
+logger = logging.getLogger('qrcode')
 
 
 class BaseHandler():

@@ -3,7 +3,7 @@
 # @Author: hollay
 # @Date:   2014-09-27 10:23:54
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-09 09:52:50
+# @Last Modified time: 2014-10-09 14:32:24
 
 
 class MessageRegister():
@@ -19,7 +19,7 @@ class MessageRegister():
         return message_wrapper
 
     def get_message_class(self, type):
-        return self.message_types.pop(type, UnknownMessage)
+        return self.message_types.get(type, UnknownMessage)
 
 messager = MessageRegister()
 

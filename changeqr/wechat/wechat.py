@@ -6,7 +6,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-09-28 12:08:33
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-09 09:54:01
+# @Last Modified time: 2014-10-09 19:44:02
 
 import hashlib
 import requests
@@ -81,7 +81,7 @@ class Wechat():
             if length > 1:
                 result[param.tagName] = self._xml2dict(param)
             else:
-                result[param.tagName] = param.childNodes[0].data
+                result[param.tagName] = len(param.childNodes) > 0 and param.childNodes[0].data or ''
 
         return result
 
