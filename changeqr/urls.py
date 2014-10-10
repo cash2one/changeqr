@@ -10,8 +10,10 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
+    url(r'^django-rq/', include('django_rq.urls')),
 
     url(r'^gateway/$', 'qrcode.views.weixin.gateway', name='gateway'),
+    url(r'^test/$', 'qrcode.views.weixin.test', name='test'),
 )
 
 urlpatterns += patterns('web.views',

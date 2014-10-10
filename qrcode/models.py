@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Hollay.Yan
 # @Date:   2014-10-08 19:25:40
-# @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-09 20:01:04
+# @Last Modified by:   hollay
+# @Last Modified time: 2014-10-10 23:25:20
 
 from django.db import models
 
@@ -124,7 +124,8 @@ class CodeContent(models.Model):
         (0, 'Created'),  # 创建
         (1, 'Interactive'),  # 正在交互
         (2, 'Confirmed'),  # 已确认
-        (3, 'Canceled'),  # 撤销
+        (3, 'Downloaded'), # 媒体已下载
+        (4, 'Canceled'),  # 撤销
     )
 
     qrcode = models.OneToOneField(Qrcode, blank=False)
@@ -136,7 +137,7 @@ class CodeContent(models.Model):
     last_update = models.DateTimeField(default=datetime.now)
 
     def save(self, *args, **kwargs):
-        self.update_time = datetime.now()
+        self.last_update = datetime.now()
         super(CodeContent, self).save(*args, **kwargs)
 
 
@@ -147,9 +148,9 @@ class CodeMedia(models.Model):
     '''
     MEDIA_TYPE = (
         (0, '未知类型'),
-        (1, '音频'),
-        (2, '图片'),
-        (3, '视频'),
+        (1, 'voice'),
+        (2, 'pic'),
+        (3, 'video'),
     )
 
     relate_to = models.ForeignKey(CodeContent, blank=False)
@@ -167,3 +168,12 @@ class CodeMedia(models.Model):
     confirmed = models.BooleanField(default=False)
 
     url = models.CharField(max_length=100, default='')
+
+    def ext_name(self):
+        if self.media_type == 1:
+            return self.vformat
+        elif self.media_type == 2:
+            return 'jpg'
+        elif self.media_type == 3:
+            return 'mp4'
+        return ''

@@ -99,3 +99,5 @@ vendor/mms-agent/settings.py
 
 **/migrations/*
 
+# temp file
+cache.cfg

@@ -2,19 +2,20 @@
 # -*- coding: utf-8 -*-
 # @Author: Hollay.Yan
 # @Date:   2014-10-08 20:47:07
-# @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-09 21:05:38
+# @Last Modified by:   hollay
+# @Last Modified time: 2014-10-10 23:26:44
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
+from django.conf import settings
 
 from changeqr.wechat.wechat import Wechat
 
 import logging
 
-APP_ID = 'wx359b54263ab9dca2'
-APP_SECRET = 'cb6f31c61fa644783cfab1ae736e5786'
-TOKEN = '23d446db1409552373'
+APP_ID = settings.WEIXIN_API['APP_ID']
+APP_SECRET = settings.WEIXIN_API['APP_SECRET']
+TOKEN = settings.WEIXIN_API['TOKEN']
 
 logger = logging.getLogger('qrcode')
 
@@ -33,3 +34,11 @@ def gateway(request):
         return HttpResponse('')
 
     return HttpResponse(ret)
+
+
+def test(request):
+
+    from changeqr.tasks.wechattask import download_media
+    download_media.delay(9)
+
+    return HttpResponse('Good')
