@@ -13,3 +13,7 @@ urlpatterns = patterns('',
 
     url(r'^gateway/$', 'qrcode.views.weixin.gateway', name='gateway'),
 )
+
+urlpatterns += patterns('web.views',
+	url(r'^web/', include('web.urls')),
+)
