@@ -6,6 +6,8 @@
 
     pip install django-rq
 
+[文档地址](https://github.com/ui/django-rq)
+
 2. INSTALLED_APPS添加应用
 
     INSTALLED_APPS = {
