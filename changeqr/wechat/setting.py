@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Hollay.Yan
 # @Date:   2014-09-30 11:17:39
-# @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-09 13:57:12
+# @Last Modified by:   hollay
+# @Last Modified time: 2014-10-11 14:54:56
 
 import ConfigParser
 import time
@@ -67,6 +67,17 @@ class FileTokenCache(TokenCache):
 
 
 class RedisTokenCache(TokenCache):
-    pass
+
+    def __init__(self):
+        super(FileTokenCache, self).__init__()
+
+    def get(self, appid):
+        pass
+
+    def set(self, appid, token):
+        pass
+
+    def expire(self, appid):
+        pass
 
 token_cache_clazz = FileTokenCache

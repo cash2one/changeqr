@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-08 19:25:40
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-10 23:25:20
+# @Last Modified time: 2014-10-11 17:45:02
 
 from django.db import models
 
@@ -13,7 +13,7 @@ from datetime import datetime
 
 CODE_STATUS = (
     (0, '等待激活'),
-    (1, '等待输入'),
+    (1, '空白二维码'),
     (4, '正在编辑'),
     (2, '正在使用'),  # 已经录入内容
     (3, '冻结'),
@@ -120,7 +120,7 @@ class CodeContent(models.Model):
     一个二维码对应的媒体类，可以包含1-3个 图片、视频、音频
     '''
 
-    MEDIA_STATUS = (
+    CONTENT_STATUS = (
         (0, 'Created'),  # 创建
         (1, 'Interactive'),  # 正在交互
         (2, 'Confirmed'),  # 已确认
@@ -132,13 +132,63 @@ class CodeContent(models.Model):
     # 操作者 微信公众 ID
     uid = models.CharField(max_length=30)
 
-    status = models.IntegerField(default=0)
+    text = models.CharField(max_length=400)
+
+    image_count = models.IntegerField(default=0)  # MAX 6
+
+    voice_count = models.IntegerField(default=0)  # MAX 1
+
+    video_count = models.IntegerField(default=0)  # MAX 1
+
+    last_media = models.IntegerField(null=True, blank=True) # 最近一次操作增加的内容，用于撤销
+
+    status = models.IntegerField(default=0, choices=CONTENT_STATUS)
 
     last_update = models.DateTimeField(default=datetime.now)
 
     def save(self, *args, **kwargs):
         self.last_update = datetime.now()
         super(CodeContent, self).save(*args, **kwargs)
+
+    def accept_more(self, type=100):
+        if type == 1:
+            return self.voice_count < 1
+        elif type == 2:
+            return self.image_count < 6
+        elif type == 3:
+            return False
+            # return self.video_count < 1
+        elif type == 0:
+            return not self.text
+        else:
+            return self.image_count < 6 or self.voice_count < 1 and self.text
+
+    def incr(self, media_type):
+        if media_type == 1:
+            self.voice_count += 1
+        elif media_type == 2:
+            self.image_count += 1
+        elif media_type == 3:
+            self.video_count += 1
+        else:
+            return
+
+        self.last_media = media_type
+        self.save()
+
+    def decr(self, media_type):
+        if media_type == 1:
+            self.voice_count -= 1
+        elif media_type == 2:
+            self.image_count -= 1
+        elif media_type == 3:
+            self.video_count -= 1
+        else:
+            return
+
+        self.last_media = None
+        self.save()
+
 
 
 class CodeMedia(models.Model):

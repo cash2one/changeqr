@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-09 10:59:35
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-11 10:22:02
+# @Last Modified time: 2014-10-11 17:45:52
 
 # 需要在 __init__.py 中执行 from qrhandler import *， 否则handler无法被注册
 
@@ -24,7 +24,7 @@ def handle_qrcode(code, message):
     处理已经识别的二维码字符串
     '''
 
-    old = CodeContent.objects.filter(uid=message.fromuser).exclude(status=2).first()
+    old = CodeContent.objects.filter(uid=message.fromuser, status=1).first()
     if old:
         return message.wechat.reply_text(MSG['busy'])
 
@@ -69,12 +69,22 @@ def save_interactive(message, content):
         media.confirmed = True
         media.save()
 
-
-def print_inactive(message, num):
+def print_inactive(message, content):
     '''
     打印交互信息
     '''
-    return message.wechat.reply_text(MSG['step'] % (num, 3 - num))
+    to_print = []
+    if not content.text:
+        to_print.append(MSG['step_text'])
+    if content.image_count < 6:
+        to_print.append(MSG['step_img'] % (6 - content.image_count))
+    if content.voice_count < 1:
+        to_print.append(MSG['step_voice'])
+
+    if len(to_print) > 0:
+        return message.wechat.reply_text(MSG['step'] % ('', ','.join(to_print)))
+    else:
+        return message.wechat.reply_text(MSG['step_nomore'])
 
 
 @handler.register('event')
@@ -97,6 +107,7 @@ class TextQrcodeHandler(BaseHandler):
 
     '''
     用户在公众账号中直接输入二维码内容
+    media_type = 0
     '''
 
     _pattern = re.compile(r'^([a-zA-Z0-9]{4}-[a-zA-Z0-9]{15})$')
@@ -113,10 +124,18 @@ class TextQrcodeHandler(BaseHandler):
                 uid=message.fromuser, status=1).first()
             if not content:
                 return
-            media = content.codemedia_set.filter(confirmed=False).first()
-            if not media:
-                return
-            media.delete()
+
+            if content.last_media is not None:
+                if content.last_media == 0:
+                    content.text = ''
+                    content.last_media = None
+                    content.save()
+                else:
+                    media = content.codemedia_set.filter(confirmed=False).first()
+                    if media:
+                        media.delete()
+
+                    content.decr(media.media_type)
 
             return message.wechat.reply_text(MSG['rollback'])
         elif message.content == '1':
@@ -126,6 +145,7 @@ class TextQrcodeHandler(BaseHandler):
             save_interactive(message, content)
 
             content.status = 2
+            content.last_media = None
             content.save()
 
             content.qrcode.status = 2
@@ -139,13 +159,30 @@ class TextQrcodeHandler(BaseHandler):
             return message.wechat.reply_text(MSG['success'])
         elif message.content == '?':
             return print_menu(message)
+        else:
+            content = CodeContent.objects.filter(
+                uid=message.fromuser, status=1).first()
+            save_interactive(message, content)
+
+            if len(message.content) > 200:
+                return message.wechat.reply_text(MSG['texttoolong'])
+
+            if not content.accept_more(0):
+                return message.wechat.reply_text(MSG['textalreadyset'])
+            # 输入文字内容
+            content.text = message.content
+            content.last_media = 0
+            content.save()
+
+            return print_inactive(message, content)
 
 
 @handler.register('image')
 class ImageHandler(BaseHandler):
 
     '''
-    图片消息处理
+    图片消息处理 
+    media_type = 2
     '''
 
     def handle(self, message):
@@ -153,6 +190,9 @@ class ImageHandler(BaseHandler):
             uid=message.fromuser, status=1).first()
         if not content:
             return print_menu(message)
+
+        if not content.accept_more(2):
+            return message.wechat.reply_text(MSG['imagealreadyset'])
 
         save_interactive(message, content)
 
@@ -166,7 +206,9 @@ class ImageHandler(BaseHandler):
 
         media.save()
 
-        return print_inactive(message, 1)
+        content.incr(media.media_type)
+
+        return print_inactive(message, content)
 
 
 @handler.register('voice')
@@ -174,14 +216,18 @@ class VoiceHandler(BaseHandler):
 
     '''
     音频消息处理
+    media_type = 1
     '''
 
     def handle(self, message):
-        logger.info('in voice handler')
+
         content = CodeContent.objects.filter(
             uid=message.fromuser, status=1).first()
         if not content:
             return print_menu(message)
+
+        if not content.accept_more(1):
+            return message.wechat.reply_text(MSG['voicealreadyset'])
 
         save_interactive(message, content)
 
@@ -195,14 +241,18 @@ class VoiceHandler(BaseHandler):
 
         media.save()
 
-        return print_inactive(message, 1)
+        content.incr(media.media_type)
+
+        return print_inactive(message, content)
 
 
-@handler.register('video')
+# 暂时不对视频进行处理
+# @handler.register('video')
 class VideoHandler(BaseHandler):
 
     '''
     视频消息处理
+    media_type = 3
     '''
 
     def handle(self, message):
@@ -224,7 +274,9 @@ class VideoHandler(BaseHandler):
 
         media.save()
 
-        return print_inactive(message, 1)
+        content.incr(media.media_type)
+
+        return print_inactive(message, content)
 
 
 @handler.register('video', level=1)
@@ -236,13 +288,3 @@ class LoggerHandler(BaseHandler):
 
     def handle(self, message):
         logger.info(message.raw)
-
-
-# @handler.register('text', level=1)
-class CeleryHandler(BaseHandler):
-
-    def handle(self, message):
-        from changeqr.tasks.testtask import add
-        # result = add(1, 3)
-        r = add.delay(3, 5)
-        logger.info('Celery called, %s' % r)
