@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Hollay.Yan
 # @Date:   2014-10-09 10:59:35
-# @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-09 21:30:44
+# @Last Modified by:   hollay
+# @Last Modified time: 2014-10-11 10:22:02
 
 # 需要在 __init__.py 中执行 from qrhandler import *， 否则handler无法被注册
 
@@ -132,7 +132,9 @@ class TextQrcodeHandler(BaseHandler):
             content.used_at = datetime.now()
             content.qrcode.save()
 
-            # TODO: 推送消息到消息队列，完成图片、音频、视频下载
+            # 推送消息到消息队列，完成图片、音频、视频下载
+            from changeqr.tasks.wechattask import download_media
+            download_media.delay(content.pk)
 
             return message.wechat.reply_text(MSG['success'])
         elif message.content == '?':
