@@ -19,9 +19,9 @@
 <body onunload="unload">
 	<div class="wrapper">
 		<div class="container">
-			<!-- <p class="detail">
-			你好咯
-			</p> -->
+			{% if text %}
+			<pre class="detail">{{text}}</pre>
+			{% endif %}
 			{% if imgs %}
 			<div class="photo_show clearfix">
 				{% for img in imgs %}
@@ -39,7 +39,8 @@
 						你的浏览器不支持音频播放，请使用UC等主流浏览器播放！
 					</audio>
 				</div>
-				<p class="audio_tip">点击播放</p>
+				<p class="audio_tip">点击播放 <a style="position:absolute; right:10px;" href="{{MEDIA_URL}}{{ audio.url }}" download>下载</a></p>
+
 			</div>
 			{% endif %}
 			

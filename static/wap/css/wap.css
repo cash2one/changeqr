@@ -123,6 +123,7 @@
 .wrapper .know_more_wrap {
   text-align: center;
   border-top: 1px solid #E0E0E0;
+  margin-bottom: 20px;
 }
 .wrapper .know_more_wrap .konw_more_font {
   color: #666;

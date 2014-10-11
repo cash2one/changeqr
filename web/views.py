@@ -14,6 +14,7 @@ def index(request):
 def wap_media (request):
 
 	imgs = []
+	text = None
 	audio = None
 	video = None
 	use_time = None
@@ -24,6 +25,7 @@ def wap_media (request):
 		try:
 			qrcode = Qrcode.objects.get(full=code)
 			qrcodeContent = CodeContent.objects.get(qrcode=qrcode)
+			text = qrcodeContent.text
 			use_time = qrcodeContent.last_update
 			medias = CodeMedia.objects.filter(relate_to=qrcodeContent)
 			# print medias
@@ -41,6 +43,7 @@ def wap_media (request):
 	# print audio
 	# print video
 	return render_to_response('wap/media.html', {
+			'text': text,
 			'imgs': imgs,
 			'audio': audio,
 			'video': video,
