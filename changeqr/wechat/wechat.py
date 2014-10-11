@@ -6,7 +6,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-09-28 12:08:33
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-11 10:43:04
+# @Last Modified time: 2014-10-11 22:01:10
 
 import hashlib
 import requests
@@ -20,7 +20,8 @@ from handler import handler
 from reply import *
 from exception import *
 
-from setting import token_cache_clazz
+# from setting import token_cache_clazz
+from conf import token_cache_clazz
 
 
 class Wechat():

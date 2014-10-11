@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-08 20:47:07
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-10 23:26:44
+# @Last Modified time: 2014-10-11 22:02:44
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
@@ -39,6 +39,6 @@ def gateway(request):
 def test(request):
 
     from changeqr.tasks.wechattask import download_media
-    download_media.delay(9)
+    download_media.delay(1)
 
     return HttpResponse('Good')
