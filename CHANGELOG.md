@@ -1,5 +1,34 @@
 # CHANGE LOG
 
+2014.10.11
+=========================
+使用 Redis 作为 django 缓存，并将微信 access_token 缓存迁移到 cache 存储
+1. 安装django-redis
+
+    pip install django-redis
+
+[文档地址](http://niwibe.github.io/django-redis/)
+
+2. settings.py 增加
+
+    CACHES = {
+        'default': {
+            'BACKEND': 'redis_cache.cache.RedisCache',
+            'LOCATION': '10.0.100.1:6379:1',  # DB 1
+            'OPTIONS': {
+                'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
+                'PASSWORD': '',  # Optional
+            }
+        }
+    }
+
+3. access_token 缓存类设置
+
+    # 默认使用 RedisTokenCache， Redis不可用时，可采用文件缓存
+    # TOKEN_CACHE_CLASS = 'changeqr.wechat.conf.RedisTokenCache'
+    TOKEN_CACHE_CLASS = 'changeqr.wechat.conf.FileTokenCache'
+
+
 2014.10.10
 =========================
 1. 安装 django-rq
