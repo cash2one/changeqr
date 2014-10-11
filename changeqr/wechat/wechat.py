@@ -5,8 +5,8 @@
 # 多客服相关接口、微店接口、设备功能接口
 # @Author: Hollay.Yan
 # @Date:   2014-09-28 12:08:33
-# @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-09 19:44:02
+# @Last Modified by:   hollay
+# @Last Modified time: 2014-10-11 10:43:04
 
 import hashlib
 import requests
@@ -20,7 +20,7 @@ from handler import handler
 from reply import *
 from exception import *
 
-from settings import token_cache_clazz
+from setting import token_cache_clazz
 
 
 class Wechat():
