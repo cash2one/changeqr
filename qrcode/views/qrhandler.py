@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-09 10:59:35
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-12 14:16:41
+# @Last Modified time: 2014-10-12 14:20:45
 
 # 需要在 __init__.py 中执行 from qrhandler import *， 否则handler无法被注册
 
@@ -302,10 +302,16 @@ class VideoHandler(BaseHandler):
 class SubscribeHandler(BaseHandler):
     '''
     关注公众号事件响应
+    点击帮助事件
     '''
     def handle(self, message):
         if message.event == 'subscribe':
             return message.wechat.reply_text(MSG['menu'])
+
+        if message.event == 'click' and message.eventkey == 'help':
+            return message.wechat.reply_text(MSG['menu'])
+
+
 
 @handler.register('video', level=1)
 @handler.register('text', level=1)

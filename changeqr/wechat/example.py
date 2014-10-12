@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-09-28 12:06:58
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-09 16:06:19
+# @Last Modified time: 2014-10-12 14:23:39
 
 import time
 
@@ -17,6 +17,9 @@ APP_SECRET = 'cb6f31c61fa644783cfab1ae736e5786'
 
 UID = 'oFZijt71j9NzhSqQzVf1_Im3Ucn0'
 
+
+from django.conf import settings
+settings.configure()
 
 @handler.register('text')
 class SystemHandler(BaseHandler):
@@ -93,8 +96,24 @@ menu = '''
 }
 '''
 
+menu = u'''
+{
+	"button": [{
+		"name": "扫描二维码",
+		"type": "scancode_waitmsg",
+		"key": "scancode",
+		"sub_button": []
+	}, {
+		"name": "发图",
+		"type": "click",
+		"key": "help",
+		"sub_button": []
+	}]
+}
+
+'''
 wechat = Wechat(token='token', appid=APP_ID, appsecret=APP_SECRET)
-# ret = wechat.create_menu(menu)
+ret = wechat.create_menu(menu)
 # ret = wechat.delete_menu()
 
 # ret = wechat.upload_media('image', open('/tmp/1.jpg'))
@@ -171,12 +190,12 @@ wechat = Wechat(token='token', appid=APP_ID, appsecret=APP_SECRET)
 # ret = wechat.get_user_info(UID)
 # {u'province': u'\u5317\u4eac', u'city': u'\u6d77\u6dc0', u'subscribe_time': 1412060454, u'headimgurl': u'http://wx.qlogo.cn/mmopen/5pztFxoEeQWnZKPz8FfPGmkmQB1RKp4nicroiaAe8BibtibTfkOaMUaPicpoiaYHvuQQCjzM64a3tXbPftia7N19GGgltlPka2ScfiaY/0', u'language': u'zh_CN', u'openid': u'oFZijt11OjA4i3Fq1jSjf1agboxw', u'country': u'\u4e2d\u56fd', u'remark': u'', u'sex': 1, u'subscribe': 1, u'nickname': u'\u7d2b\u7535\u9752\u971c'}
 
-ret = wechat.send_text_message(UID, 
-u'''1. 菜单1\n
-2. <a href="http://www.baidu.com/" >超链接</a>\n
-3. /::)\n
-4. [呲牙]/呲牙/::D[难过]  /难过
-5. /:bye/:xx/:!!!/:,@!/::8/:,@@/::L/::>/::,@/:,@f/::-S/:?/:,@x/::!/:|-)/::g/:,@o/::d/:,@-D/:,@P/::T/::Q/:--b/::+/::(/::O/::X/::Z/::'(/::-|/::@/::P/::D/::$/::</:8-)/::|
-6. \ue136 \ue138 \ue12f \ue428 \ue341`
-''')
+# ret = wechat.send_text_message(UID, 
+# u'''1. 菜单1\n
+# 2. <a href="http://www.baidu.com/" >超链接</a>\n
+# 3. /::)\n
+# 4. [呲牙]/呲牙/::D[难过]  /难过
+# 5. /:bye/:xx/:!!!/:,@!/::8/:,@@/::L/::>/::,@/:,@f/::-S/:?/:,@x/::!/:|-)/::g/:,@o/::d/:,@-D/:,@P/::T/::Q/:--b/::+/::(/::O/::X/::Z/::'(/::-|/::@/::P/::D/::$/::</:8-)/::|
+# 6. \ue136 \ue138 \ue12f \ue428 \ue341`
+# ''')
 print ret

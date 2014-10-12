@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Hollay.Yan
 # @Date:   2014-10-08 20:47:07
-# @Last Modified by:   hollay
-# @Last Modified time: 2014-10-11 22:02:44
+# @Last Modified by:   Hollay.Yan
+# @Last Modified time: 2014-10-12 14:34:36
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
@@ -36,9 +36,35 @@ def gateway(request):
     return HttpResponse(ret)
 
 
-def test(request):
+def enqueue(request, id):
 
     from changeqr.tasks.wechattask import download_media
-    download_media.delay(1)
+    download_media.delay(id)
 
-    return HttpResponse('Good')
+    return HttpResponse('Enqueue success')
+
+
+def menu(request):
+    menu = u'''
+    {
+        "button": [{
+            "name": "扫码",
+            "type": "scancode_waitmsg",
+            "key": "scancode",
+            "sub_button": []
+        }, {
+            "name": "帮助",
+            "type": "click",
+            "key": "help",
+            "sub_button": []
+        }]
+    }
+    '''.encode('utf-8')
+    from changeqr.wechat.wechat import Wechat
+
+    wechat = Wechat(token='token', appid=APP_ID, appsecret=APP_SECRET)
+    ret = wechat.create_menu(menu)
+
+    logger.info(ret)
+
+    return HttpResponse(ret)

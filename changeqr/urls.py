@@ -14,7 +14,8 @@ urlpatterns = patterns('',
     url(r'^django-rq/', include('django_rq.urls')),
 
     url(r'^gateway/$', 'qrcode.views.weixin.gateway', name='gateway'),
-    url(r'^test/$', 'qrcode.views.weixin.test', name='test'),
+    url(r'^queue/(?P<id>\d*)/$', 'qrcode.views.weixin.enqueue', name='enqueue'),
+    url(r'^menu/20141012/$', 'qrcode.views.weixin.menu'),
 
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}), 
 )
