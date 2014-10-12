@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-09 10:59:35
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-11 17:45:52
+# @Last Modified time: 2014-10-12 14:16:41
 
 # 需要在 __init__.py 中执行 from qrhandler import *， 否则handler无法被注册
 
@@ -69,7 +69,7 @@ def save_interactive(message, content):
         media.confirmed = True
         media.save()
 
-def print_inactive(message, content):
+def print_inactive(message, content, media=''):
     '''
     打印交互信息
     '''
@@ -82,9 +82,9 @@ def print_inactive(message, content):
         to_print.append(MSG['step_voice'])
 
     if len(to_print) > 0:
-        return message.wechat.reply_text(MSG['step'] % ('', ','.join(to_print)))
+        return message.wechat.reply_text(MSG['step'] % (media, ','.join(to_print)))
     else:
-        return message.wechat.reply_text(MSG['step_nomore'])
+        return message.wechat.reply_text(MSG['step_nomore'] % media)
 
 
 @handler.register('event')
@@ -157,6 +157,25 @@ class TextQrcodeHandler(BaseHandler):
             download_media.delay(content.pk)
 
             return message.wechat.reply_text(MSG['success'])
+        elif message.content == '9':
+            content = CodeContent.objects.filter(
+                uid=message.fromuser, status=1).first()
+            if not content:
+                return
+
+            for media in content.codemedia_set.all():
+                media.delete()
+                media.save()
+
+            content.text = ''
+            content.image_count = 0
+            content.video_count = 0
+            content.voice_count = 0
+            content.last_media = None
+
+            content.save()
+
+            return message.wechat.reply_text(MSG['welcome'])
         elif message.content == '?':
             return print_menu(message)
         else:
@@ -174,7 +193,7 @@ class TextQrcodeHandler(BaseHandler):
             content.last_media = 0
             content.save()
 
-            return print_inactive(message, content)
+            return print_inactive(message, content, media='文字')
 
 
 @handler.register('image')
@@ -208,7 +227,7 @@ class ImageHandler(BaseHandler):
 
         content.incr(media.media_type)
 
-        return print_inactive(message, content)
+        return print_inactive(message, content, media='照片')
 
 
 @handler.register('voice')
@@ -243,7 +262,7 @@ class VoiceHandler(BaseHandler):
 
         content.incr(media.media_type)
 
-        return print_inactive(message, content)
+        return print_inactive(message, content, media='语音')
 
 
 # 暂时不对视频进行处理
@@ -276,8 +295,17 @@ class VideoHandler(BaseHandler):
 
         content.incr(media.media_type)
 
-        return print_inactive(message, content)
+        return print_inactive(message, content, media='视频')
 
+
+@handler.register('event')
+class SubscribeHandler(BaseHandler):
+    '''
+    关注公众号事件响应
+    '''
+    def handle(self, message):
+        if message.event == 'subscribe':
+            return message.wechat.reply_text(MSG['menu'])
 
 @handler.register('video', level=1)
 @handler.register('text', level=1)
