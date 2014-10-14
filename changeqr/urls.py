@@ -22,5 +22,5 @@ urlpatterns = patterns('',
 
 urlpatterns += patterns('web.views',
     url(r'^$', 'index', name='index'),
-    url(r'^wap/(?P<code>.*)$', 'wap_media', name='media'),
+    url(r'^wap/(?P<code>[a-zA-Z0-9]{20})$', 'wap_media', name='media'),
 )

@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 # @Author: Hollay.Yan
 # @Date:   2014-10-08 19:25:40
-# @Last Modified by:   hollay
-# @Last Modified time: 2014-10-14 20:59:28
+# @Last Modified by:   Hollay.Yan
+# @Last Modified time: 2014-10-14 22:40:16
 
 from django.db import models
 
 import string
 import random
+import hashlib
 from datetime import datetime
 
 CODE_STATUS = (
@@ -18,6 +19,26 @@ CODE_STATUS = (
     (2, '正在使用'),  # 已经录入内容
     (3, '冻结'),
 )
+
+
+def checksum(origin):
+    '''
+    简单校验
+    '''
+    m = hashlib.md5()
+    m.update(origin)
+    return '%s%s' % (origin, m.hexdigest()[8:9])
+
+
+def checksum_valid(origin):
+    '''
+    '''
+    tovalid = origin[0:-1]
+    checksum = origin[-1:0]
+
+    m = hashlib.md5()
+    m.update(tovalid)
+    return checksum == m..hexdigest()[8:9]
 
 
 def random_str(length=11):
@@ -30,17 +51,53 @@ def random_str(length=11):
     return ''.join(random.choice(alphabet) for i in range(length))
 
 
+class Qrprefix(models.Model):
+
+    '''
+    二维码前缀 4 位，用于管理二维码
+    '''
+    code = models.CharField(blank=False, unique=True, max_length=4)
+
+    # 用于保存不知道啥
+    title = models.CharField(default=u'空白前缀', max_length=50)
+
+    @staticmethod
+    def create(self, code=None, title=''):
+        '''
+        创建新的前缀
+        '''
+        prefix = Qrprefix()
+
+        prefix.title = title
+
+        if not code:
+            prefix.code = random_str(length=4)
+        else:
+            prefix.code = code
+
+        try:
+            prefix.save()
+        except:
+            if code:
+                raise Exception(u'该前缀已经被使用')
+            return Qrprefix.create(title=title)
+
+        return prefix
+
+
 class Qrcode(models.Model):
 
     '''
     二维码字符串 20 位
-    前缀 4位 + 连接符 1位 + 二维码 15位
+    前缀 4位 + 二维码类别 1位 + 二维码 14位 + 校验码 1位
     '''
 
     # 前缀，用于区分用户/使用场景等
     prefix = models.CharField(blank=False, max_length=4)
+    # 二维码类别
+    ctype = models.CharField(blank=False, max_length=1)
     # 二维码字段，用于区分不同二维码
-    code = models.CharField(blank=False, unique=True, max_length=15)
+    code = models.CharField(blank=False, unique=True, max_length=14)
     # 完整二维码串
     full = models.CharField(blank=False, unique=True, max_length=20)
 
@@ -49,7 +106,8 @@ class Qrcode(models.Model):
 
     create_at = models.DateTimeField(
         default=datetime.now, verbose_name=u'创建时间')
-    active_at = models.DateTimeField(blank=True, null=True, verbose_name=u'激活时间')
+    active_at = models.DateTimeField(
+        blank=True, null=True, verbose_name=u'激活时间')
     used_at = models.DateTimeField(blank=True, null=True, verbose_name=u'使用时间')
 
     visit_count = models.IntegerField(default=0, verbose_name=u'访问次数')
@@ -58,39 +116,32 @@ class Qrcode(models.Model):
         return self.full
 
     @staticmethod
-    def create(prefix=''):
+    def create(prefix, type='0'):
         '''
         创建新的二维码
         :param prefix 二维码前缀
         '''
-        if len(prefix) != 4:
-            return None
         qr = Qrcode()
 
-        code = random_str(length=15)
+        code = random_str(length=14)
 
         qr.prefix = prefix
         qr.code = code
 
-        qr.full = '-'.join([prefix, code])
+        qr.full = checksum(''.join([prefix, type, code]))
         try:
             qr.save()
         except Exception, e:
-            # TODO: 如何对生成的二维码去重
-            return Qrcode.create(prefix=prefix)
+            return Qrcode.create(prefix, type=type)
 
         return qr
-
-    @staticmethod
-    def createmanay(prefix=''):
-        pass
 
 
 class SubQrcode(models.Model):
 
     '''
     适用于一次保存，多次使用的场景，同时保证每个二维码都是唯一的
-    前缀 4位 + 连接符 1位 + 二维码 15位 + 连接符 1位 + 后缀 5位
+    前缀 4位 + 二维码类别 1位 + 二维码 15位 + 连接符 1位 + 后缀 5位
     理论上每个二维码可以拥有 (26+26+10)**5 个子二维码
     '''
 
@@ -109,10 +160,6 @@ class SubQrcode(models.Model):
 
     visit_count = models.IntegerField(default=0, verbose_name=u'访问次数')
 
-    @staticmethod
-    def createmanay(prefix=None):
-        pass
-
 
 class CodeContent(models.Model):
 
@@ -124,7 +171,7 @@ class CodeContent(models.Model):
         (0, 'Created'),  # 创建
         (1, 'Interactive'),  # 正在交互
         (2, 'Confirmed'),  # 已确认
-        (3, 'Downloaded'), # 媒体已下载
+        (3, 'Downloaded'),  # 媒体已下载
         (4, 'Canceled'),  # 撤销
     )
 
@@ -140,7 +187,7 @@ class CodeContent(models.Model):
 
     video_count = models.IntegerField(default=0)  # MAX 1
 
-    last_media = models.IntegerField(null=True, blank=True) # 最近一次操作增加的内容，用于撤销
+    last_media = models.IntegerField(null=True, blank=True)  # 最近一次操作增加的内容，用于撤销
 
     status = models.IntegerField(default=0, choices=CONTENT_STATUS)
 
@@ -188,7 +235,6 @@ class CodeContent(models.Model):
 
         self.last_media = None
         self.save()
-
 
 
 class CodeMedia(models.Model):
