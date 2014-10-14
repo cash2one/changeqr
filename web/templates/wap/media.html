@@ -1,11 +1,11 @@
 {% load staticfiles %}
 <!doctype html>
 <html><head>
-	<title>物语</title>
+	<title>码上说-二维码语音便签</title>
 	<meta http-equiv="Content-Type" content="text/html" charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-	<meta name="author" content="码云物语">
-	<meta name="description" content="码云物语">
+	<meta name="author" content="码上说">
+	<meta name="description" content="码上说，二维码便签，语音便签">
 	<link rel="stylesheet" href="{% static "wap/css/base.css" %}">
 	<link rel="stylesheet" href="{% static "wap/css/touchTouch.css" %}">
 	<link rel="stylesheet" href="{% static "wap/css/wap.css" %}">
@@ -44,22 +44,22 @@
 			</div>
 			{% endif %}
 			
-			{% if imgs or audio %}
+			{% if text or imgs or audio %}
 			<p class="location_wrap">
 				<b class="time_icon"></b>
 				<span class="date">{{use_time | date:"Y-m-d H:i" }}</span>
 			</p>
 			{% else %}
 			<div>
-				<span id="empty_tips"> 该二维码还未使用 </span>
+				<span id="empty_tips"> 该二维码还未使用<br>扫描官网二维码或搜索公众号“畅居·码上说”并关注，扫描并使用二维码</span>
 			</div>
 			{% endif %}
 		</div>
 		<div class="footer">
 		</div>
 		<div class="know_more_wrap">
-			<p class="konw_more_font">码云物语-码上留声 码上留影</p>
-			<a href="/web" class="konw_more_link">了解码云物语</a>
+			<p class="konw_more_font">码上说-码上留声 码上留影</p>
+			<a href="http://codespeak.me" class="konw_more_link">了解码上说</a>
 		</div>
 	</div>
 	<!-- 蒙层 -->
