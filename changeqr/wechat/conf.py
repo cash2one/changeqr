@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: hollay
 # @Date:   2014-10-11 21:37:00
-# @Last Modified by:   hollay
-# @Last Modified time: 2014-10-11 22:26:13
+# @Last Modified by:   Hollay.Yan
+# @Last Modified time: 2014-10-14 23:08:09
 
 from django.conf import settings
 from django.core.cache import cache
@@ -92,11 +92,9 @@ __token_cache_str = getattr(settings, 'TOKEN_CACHE_CLASS', None)
 
 token_cache_clazz = None
 if not __token_cache_str:
-    logger.info('default token cache class set')
     token_cache_clazz = RedisTokenCache
 else:
     try:
-        logger.info('token_cache_str set, try to import %s' % __token_cache_str)
         import sys
         ms = __token_cache_str.split('.')
         clazz = ms.pop()

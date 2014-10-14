@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-08 19:25:40
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-14 22:40:16
+# @Last Modified time: 2014-10-14 23:14:46
 
 from django.db import models
 
@@ -38,7 +38,7 @@ def checksum_valid(origin):
 
     m = hashlib.md5()
     m.update(tovalid)
-    return checksum == m..hexdigest()[8:9]
+    return checksum == m.hexdigest()[8:9]
 
 
 def random_str(length=11):
@@ -56,10 +56,19 @@ class Qrprefix(models.Model):
     '''
     二维码前缀 4 位，用于管理二维码
     '''
-    code = models.CharField(blank=False, unique=True, max_length=4)
+    code = models.CharField(
+        blank=False, unique=True, max_length=4, verbose_name=u'内容')
 
     # 用于保存不知道啥
-    title = models.CharField(default=u'空白前缀', max_length=50)
+    title = models.CharField(
+        default=u'空白前缀', max_length=50, verbose_name=u'标题')
+
+    def __unicode__(self):
+        return self.code
+
+    class Meta:
+        verbose_name = '二维码前缀'
+        verbose_name_plural = '二维码前缀'
 
     @staticmethod
     def create(self, code=None, title=''):
@@ -93,13 +102,14 @@ class Qrcode(models.Model):
     '''
 
     # 前缀，用于区分用户/使用场景等
-    prefix = models.CharField(blank=False, max_length=4)
+    prefix = models.CharField(blank=False, max_length=4, verbose_name=u'前缀')
     # 二维码类别
-    ctype = models.CharField(blank=False, max_length=1)
+    ctype = models.CharField(blank=False, max_length=1, verbose_name=u'类别')
     # 二维码字段，用于区分不同二维码
-    code = models.CharField(blank=False, unique=True, max_length=14)
+    code = models.CharField(blank=False, max_length=14, verbose_name=u'内容')
     # 完整二维码串
-    full = models.CharField(blank=False, unique=True, max_length=20)
+    full = models.CharField(
+        blank=False, unique=True, max_length=20, verbose_name=u'完整')
 
     status = models.IntegerField(
         default=0, choices=CODE_STATUS, verbose_name='二维码状态')
@@ -114,6 +124,10 @@ class Qrcode(models.Model):
 
     def __unicode__(self):
         return self.full
+
+    class Meta:
+        verbose_name = '二维码'
+        verbose_name_plural = '二维码'
 
     @staticmethod
     def create(prefix, type='0'):
@@ -137,7 +151,7 @@ class Qrcode(models.Model):
         return qr
 
 
-class SubQrcode(models.Model):
+class Subcode(models.Model):
 
     '''
     适用于一次保存，多次使用的场景，同时保证每个二维码都是唯一的
@@ -145,9 +159,11 @@ class SubQrcode(models.Model):
     理论上每个二维码可以拥有 (26+26+10)**5 个子二维码
     '''
 
-    qrcode = models.ForeignKey(Qrcode)  # 所属的父级二维码
-    postfix = models.CharField(blank=False, unique=True, max_length=5)
-    full = models.CharField(blank=False, unique=True, max_length=26)
+    qrcode = models.ForeignKey(Qrcode, verbose_name=u'二维码')  # 所属的父级二维码
+    postfix = models.CharField(
+        blank=False, unique=True, max_length=5, verbose_name=u'后缀')
+    full = models.CharField(
+        blank=False, unique=True, max_length=26, verbose_name=u'完整码')
 
     status = models.IntegerField(
         default=0, choices=CODE_STATUS, verbose_name='二维码状态')
@@ -159,6 +175,13 @@ class SubQrcode(models.Model):
     used_at = models.DateTimeField(blank=True, null=True, verbose_name=u'使用时间')
 
     visit_count = models.IntegerField(default=0, verbose_name=u'访问次数')
+
+    def __unicode__(self):
+        return self.full
+
+    class Meta:
+        verbose_name = '二维码子码'
+        verbose_name_plural = '二维码子码'
 
 
 class CodeContent(models.Model):
@@ -175,23 +198,33 @@ class CodeContent(models.Model):
         (4, 'Canceled'),  # 撤销
     )
 
-    qrcode = models.OneToOneField(Qrcode, blank=False)
+    qrcode = models.OneToOneField(Qrcode, blank=False, verbose_name=u'二维码')
     # 操作者 微信公众 ID
-    uid = models.CharField(max_length=30)
+    uid = models.CharField(max_length=30, verbose_name=u'操作者ID')
 
-    text = models.CharField(max_length=400)
+    text = models.CharField(max_length=400, verbose_name=u'文本内容')
 
-    image_count = models.IntegerField(default=0)  # MAX 6
+    image_count = models.IntegerField(default=0, verbose_name=u'图片数量')  # MAX 6
 
-    voice_count = models.IntegerField(default=0)  # MAX 1
+    voice_count = models.IntegerField(default=0, verbose_name=u'音频数量')  # MAX 1
 
-    video_count = models.IntegerField(default=0)  # MAX 1
+    video_count = models.IntegerField(default=0, verbose_name=u'视频数量')  # MAX 1
 
-    last_media = models.IntegerField(null=True, blank=True)  # 最近一次操作增加的内容，用于撤销
+    last_media = models.IntegerField(
+        null=True, blank=True, verbose_name=u'最后修改')  # 最近一次操作增加的内容，用于撤销
 
-    status = models.IntegerField(default=0, choices=CONTENT_STATUS)
+    status = models.IntegerField(
+        default=0, choices=CONTENT_STATUS, verbose_name=u'状态')
 
-    last_update = models.DateTimeField(default=datetime.now)
+    last_update = models.DateTimeField(
+        default=datetime.now, verbose_name=u'最后更新')
+
+    def __unicode__(self):
+        return self.qrcode
+
+    class Meta:
+        verbose_name = '二维码媒体内容'
+        verbose_name_plural = '二维码媒体内容'
 
     def save(self, *args, **kwargs):
         self.last_update = datetime.now()
@@ -249,21 +282,34 @@ class CodeMedia(models.Model):
         (3, 'video'),
     )
 
-    relate_to = models.ForeignKey(CodeContent, blank=False)
+    relate_to = models.ForeignKey(
+        CodeContent, blank=False, verbose_name=u'所属内容')
 
-    media_type = models.IntegerField(default=0, choices=MEDIA_TYPE)
+    media_type = models.IntegerField(
+        default=0, choices=MEDIA_TYPE, verbose_name=u'媒体类型')
 
-    media_id = models.CharField(blank=False, max_length=64)
+    media_id = models.CharField(
+        blank=False, max_length=64, verbose_name=u'媒体ID')
 
-    picurl = models.CharField(blank=True, null=True, max_length=200)
+    picurl = models.CharField(
+        blank=True, null=True, max_length=200, verbose_name=u'图片地址')
 
-    vformat = models.CharField(blank=True, null=True, max_length=5)
+    vformat = models.CharField(
+        blank=True, null=True, max_length=5, verbose_name=u'音频格式')
 
-    thumbmediaid = models.CharField(blank=True, null=True, max_length=64)
+    thumbmediaid = models.CharField(
+        blank=True, null=True, max_length=64, verbose_name=u'缩略图媒体ID')
 
-    confirmed = models.BooleanField(default=False)
+    confirmed = models.BooleanField(default=False, verbose_name=u'是否确认')
 
-    url = models.CharField(max_length=100, default='')
+    url = models.CharField(max_length=100, default='', verbose_name=u'存储地址')
+
+    def __unicode__(self):
+        return self.relate_to
+
+    class Meta:
+        verbose_name = '二维码媒体项'
+        verbose_name_plural = '二维码媒体项'
 
     def ext_name(self):
         if self.media_type == 1:
