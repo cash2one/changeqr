@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-09 10:59:35
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-12 14:20:45
+# @Last Modified time: 2014-10-14 19:28:23
 
 # 需要在 __init__.py 中执行 from qrhandler import *， 否则handler无法被注册
 
@@ -11,6 +11,7 @@ from changeqr.wechat.handler import BaseHandler, handler
 
 from qrcode.models import Qrcode, CodeContent, CodeMedia
 from messages import L10N_MESSAGES as MSG
+from django.conf import settings
 
 import re
 import logging
@@ -90,7 +91,7 @@ def print_inactive(message, content, media=''):
 @handler.register('event')
 class QrcodeHandler(BaseHandler):
 
-    _pattern = re.compile(r'^([a-zA-Z0-9]{4}-[a-zA-Z0-9]{15})$')
+    _pattern = re.compile(r'^%s([a-zA-Z0-9]{4}-[a-zA-Z0-9]{15})$' % settings.API_URL.replace('/', '\/').replace('.', '\.'))
 
     def handle(self, message):
         if not message.event == 'scancode_waitmsg':
@@ -110,7 +111,7 @@ class TextQrcodeHandler(BaseHandler):
     media_type = 0
     '''
 
-    _pattern = re.compile(r'^([a-zA-Z0-9]{4}-[a-zA-Z0-9]{15})$')
+    _pattern = re.compile(r'^%s([a-zA-Z0-9]{4}-[a-zA-Z0-9]{15})$' % settings.API_URL.replace('/', '\/').replace('.', '\.'))
 
     def handle(self, message):
         match = self._pattern.match(message.content)

@@ -21,5 +21,6 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('web.views',
-	url(r'^web/', include('web.urls')),
+    url(r'^$', 'index', name='index'),
+    url(r'^wap/(?P<code>.*)$', 'wap_media', name='media'),
 )
