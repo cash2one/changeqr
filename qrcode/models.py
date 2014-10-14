@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-08 19:25:40
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-14 23:14:46
+# @Last Modified time: 2014-10-15 00:01:19
 
 from django.db import models
 
@@ -71,7 +71,7 @@ class Qrprefix(models.Model):
         verbose_name_plural = '二维码前缀'
 
     @staticmethod
-    def create(self, code=None, title=''):
+    def create(code=None, title=''):
         '''
         创建新的前缀
         '''
@@ -130,7 +130,7 @@ class Qrcode(models.Model):
         verbose_name_plural = '二维码'
 
     @staticmethod
-    def create(prefix, type='0'):
+    def create(prefix, ctype='0'):
         '''
         创建新的二维码
         :param prefix 二维码前缀
@@ -141,12 +141,13 @@ class Qrcode(models.Model):
 
         qr.prefix = prefix
         qr.code = code
+        qr.ctype = ctype
 
-        qr.full = checksum(''.join([prefix, type, code]))
+        qr.full = checksum(''.join([prefix, ctype, code]))
         try:
             qr.save()
         except Exception, e:
-            return Qrcode.create(prefix, type=type)
+            return Qrcode.create(prefix, ctype=ctype)
 
         return qr
 
