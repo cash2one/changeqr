@@ -9,9 +9,9 @@ urlpatterns = patterns('',
     # url(r'^$', 'changeqr.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin20144102/', include(admin.site.urls)),
 
-    url(r'^django-rq/', include('django_rq.urls')),
+    url(r'^djangorq20144102/', include('django_rq.urls')),
 
     url(r'^gateway/$', 'qrcode.views.weixin.gateway', name='gateway'),
     url(r'^queue/(?P<id>\d*)/$', 'qrcode.views.weixin.enqueue', name='enqueue'),
