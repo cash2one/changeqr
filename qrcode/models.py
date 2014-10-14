@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-08 19:25:40
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-11 17:45:02
+# @Last Modified time: 2014-10-14 20:59:28
 
 from django.db import models
 
@@ -49,8 +49,8 @@ class Qrcode(models.Model):
 
     create_at = models.DateTimeField(
         default=datetime.now, verbose_name=u'创建时间')
-    active_at = models.DateTimeField(blank=True, verbose_name=u'激活时间')
-    used_at = models.DateTimeField(blank=True, verbose_name=u'使用时间')
+    active_at = models.DateTimeField(blank=True, null=True, verbose_name=u'激活时间')
+    used_at = models.DateTimeField(blank=True, null=True, verbose_name=u'使用时间')
 
     visit_count = models.IntegerField(default=0, verbose_name=u'访问次数')
 
