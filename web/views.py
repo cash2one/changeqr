@@ -20,7 +20,11 @@ def wap_media(request, code):
     video = None
     use_time = None
 
-    qrcode = get_object_or_404(Qrcode, full=code)
+    qrcode = Qrcode.objects.filter(full=code).first()
+    if not qrcode:
+        return render_to_response('wap/media.html', {
+        },  context_instance=RequestContext(request))
+
     qrcodeContent = CodeContent.objects.filter(qrcode=qrcode).first()
     if qrcodeContent:
         text = qrcodeContent.text
