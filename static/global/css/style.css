@@ -179,7 +179,7 @@ body {
 			
 	.nav li[data-slide="1"],
 	.nav li[data-slide="6"] {
-		background-color: #2f2f2f;
+		background-color: #e74c3c;
 	}
 	
 	.nav li[data-slide="2"] {
@@ -187,7 +187,8 @@ body {
 	}
 	
 	.nav li[data-slide="3"] {
-		background-color: #e74c3c;
+		background-color: #2f2f2f;
+		
 	}
 	
 	.nav li[data-slide="4"] {

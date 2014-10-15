@@ -14,13 +14,29 @@ from qrcode.models import Qrprefix, Qrcode
 
 
 class Command(BaseCommand):
-
+    option_list = BaseCommand.option_list + (
+            make_option('-p',dest='prefix_num',type='int',help='number of prefix'),
+            make_option('-c',dest='code_num',type='int',help='number of code for each prefix'),
+            make_option('-P',dest='prefix',type='string',help='prefix code'),
+        )
+    
     def handle(self, *args, **options):
-        prefix_count = int(args[0])
-        count = int(args[1])
+        if options['prefix_num'] and options['code_num']:
+            prefix_num = options['prefix_num']
+            code_num = options['code_num']
+            for p in xrange(prefix_num):
+                prefix = Qrprefix.create()
+                for c in xrange(code_num):
+                    code = Qrcode.create(prefix.code)
+                    print code.full
 
-        for p in xrange(prefix_count):
-            prefix = Qrprefix.create()
-            for c in xrange(count):
+        elif options['prefix'] and options['code_num']:
+            code_num = options['code_num']
+            try:
+                prefix = Qrprefix.objects.get(code=options['prefix'])
+            except:
+                prefix = Qrprefix.create(options['prefix'])
+            for c in xrange(code_num):
                 code = Qrcode.create(prefix.code)
                 print code.full
+            
