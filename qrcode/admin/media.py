@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-14 22:56:50
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-14 23:18:24
+# @Last Modified time: 2014-10-15 15:25:56
 
 from django.contrib import admin
 
@@ -19,5 +19,5 @@ class CodeContentAdmin(admin.ModelAdmin):
 class CodeMediaAdmin(admin.ModelAdmin):
     list_filter = ()
     list_display = ('relate_to', 'media_type', 'media_id')
-    search_fields = ('title', 'code')
+    search_fields = ()
     list_per_page = 20

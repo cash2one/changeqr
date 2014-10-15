@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-08 19:25:40
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-15 14:37:19
+# @Last Modified time: 2014-10-15 15:14:45
 
 from django.db import models
 
@@ -221,7 +221,7 @@ class CodeContent(models.Model):
         default=datetime.now, verbose_name=u'最后更新')
 
     def __unicode__(self):
-        return self.qrcode
+        return str(self.qrcode)
 
     class Meta:
         verbose_name = '二维码媒体内容'
@@ -303,10 +303,10 @@ class CodeMedia(models.Model):
 
     confirmed = models.BooleanField(default=False, verbose_name=u'是否确认')
 
-    url = models.CharField(max_length=100, default='', verbose_name=u'存储地址')
+    url = models.CharField(max_length=100, default='', blank=True, null=True, verbose_name=u'存储地址')
 
     def __unicode__(self):
-        return self.relate_to
+        return str(self.relate_to)
 
     class Meta:
         verbose_name = '二维码媒体项'

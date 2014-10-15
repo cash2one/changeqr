@@ -3,7 +3,7 @@
 # @Author: hollay
 # @Date:   2014-10-11 21:37:00
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-14 23:08:09
+# @Last Modified time: 2014-10-15 16:28:40
 
 from django.conf import settings
 from django.core.cache import cache
@@ -103,5 +103,3 @@ else:
         token_cache_clazz = getattr(sys.modules[path], clazz)
     except Exception, e:
         logger.error('Setting error on key "TOKEN_CACHE_CLASS":  %s, %s' % (__token_cache_str, e))
-
-logger.info(token_cache_clazz)
