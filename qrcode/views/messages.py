@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Hollay.Yan
 # @Date:   2014-10-09 19:53:17
-# @Last Modified by:   hollay
-# @Last Modified time: 2014-10-12 11:07:02
+# @Last Modified by:   Hollay.Yan
+# @Last Modified time: 2014-10-15 14:44:30
 
 L10N_MESSAGES = {
     'unauthorized': u'''非常抱歉，该二维码未被授权''',
@@ -12,7 +12,7 @@ L10N_MESSAGES = {
     'used': u'''非常抱歉，该二维码已经被使用。请使用微信“扫一扫”扫描查看。''',
     'rollback': u'''已撤销上一步操作，您可以继续输入其它内容。''',
     'step': u'''%s保存成功！您还可以上传%s。\n撤销本次操作请回复0，完成所有输入请回复1，清空所有输入请回复9''',
-    'step_nomore': u'''%s保存成功！\n撤销本次操作请回复0，完成所有输入请回复1，清空所有输入请回复9''',
+    'step_nomore': u'''%s内容保存成功！\n撤销本次操作请回复0，完成所有输入请回复1，清空所有输入请回复9''',
     'step_text': u'''1段文字 ''',
     'step_img': u'''%d张图片''',
     'step_voice': u'''1段语音''',

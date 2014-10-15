@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-09 10:59:35
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-14 22:41:50
+# @Last Modified time: 2014-10-15 14:44:20
 
 # 需要在 __init__.py 中执行 from qrhandler import *， 否则handler无法被注册
 
@@ -70,7 +70,7 @@ def save_interactive(message, content):
         media.confirmed = True
         media.save()
 
-def print_inactive(message, content, media=''):
+def print_interactive(message, content, media=''):
     '''
     打印交互信息
     '''
@@ -194,7 +194,7 @@ class TextQrcodeHandler(BaseHandler):
             content.last_media = 0
             content.save()
 
-            return print_inactive(message, content, media='文字')
+            return print_interactive(message, content, media=u'文字')
 
 
 @handler.register('image')
@@ -228,7 +228,7 @@ class ImageHandler(BaseHandler):
 
         content.incr(media.media_type)
 
-        return print_inactive(message, content, media='照片')
+        return print_interactive(message, content, media=u'照片')
 
 
 @handler.register('voice')
@@ -263,7 +263,7 @@ class VoiceHandler(BaseHandler):
 
         content.incr(media.media_type)
 
-        return print_inactive(message, content, media='语音')
+        return print_interactive(message, content, media=u'语音')
 
 
 # 暂时不对视频进行处理
@@ -296,7 +296,7 @@ class VideoHandler(BaseHandler):
 
         content.incr(media.media_type)
 
-        return print_inactive(message, content, media='视频')
+        return print_interactive(message, content, media=u'视频')
 
 
 @handler.register('event')
