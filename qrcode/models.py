@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-08 19:25:40
 # @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-15 00:01:19
+# @Last Modified time: 2014-10-15 14:37:19
 
 from django.db import models
 
@@ -203,7 +203,7 @@ class CodeContent(models.Model):
     # 操作者 微信公众 ID
     uid = models.CharField(max_length=30, verbose_name=u'操作者ID')
 
-    text = models.CharField(max_length=400, verbose_name=u'文本内容')
+    text = models.CharField(max_length=400, blank=True, null=True, verbose_name=u'文本内容')
 
     image_count = models.IntegerField(default=0, verbose_name=u'图片数量')  # MAX 6
 
