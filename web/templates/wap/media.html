@@ -25,7 +25,7 @@
 			{% if imgs %}
 			<div class="photo_show clearfix">
 				{% for img in imgs %}
-					<a href="{{MEDIA_URL}}{{ img.url }}" style="background: url({{MEDIA_URL}}{{ img.url }}) center center;"></a>
+					<a href="{{MEDIA_URL}}{{ img.url }}" style="background: url({{MEDIA_URL}}{{ img.url }}) no-repeat;" class="bg_fix"></a>
 				{% endfor %}
 			</div>
 			{% endif %}

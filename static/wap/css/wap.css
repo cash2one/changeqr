@@ -185,7 +185,12 @@
   text-align: center;
   line-height: 20px;
 }
-
+.bg_fix{
+  background-size: cover;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+}
 @media only screen and (-Webkit-min-device-pixel-ratio: 2), only screen and (-moz-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2/1), only screen and (min-device-pixel-ratio: 2) {
   /* 当设备像素比不小于1.5的时候... */
   .wrapper .container .location_wrap b {
