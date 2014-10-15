@@ -21,8 +21,8 @@ def wap_media(request, code):
     use_time = None
 
     qrcode = get_object_or_404(Qrcode, full=code)
-    try:
-        qrcodeContent = CodeContent.objects.get(qrcode=qrcode)
+    qrcodeContent = CodeContent.objects.filter(qrcode=qrcode).first()
+    if qrcodeContent:
         text = qrcodeContent.text
         use_time = qrcodeContent.last_update
         medias = CodeMedia.objects.filter(relate_to=qrcodeContent)
@@ -33,8 +33,9 @@ def wap_media(request, code):
                 imgs.append(m)
             elif m.media_type == 3:
                 video = m
-    except:
-        pass
+        qrcode.visit_count = qrcode.visit_count +1
+        qrcode.save()
+
     return render_to_response('wap/media.html', {
         'text': text,
         'imgs': imgs,
