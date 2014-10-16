@@ -3,7 +3,7 @@
 # @Author: hollay
 # @Date:   2014-10-10 21:58:26
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-16 12:57:24
+# @Last Modified time: 2014-10-16 14:16:43
 
 import logging
 import uuid
@@ -61,7 +61,7 @@ def download_media(content_id):
             os.makedirs(path)
 
         fprefix = uuid.uuid1()
-        fext = media.ext_name
+        fext = media.ext_name()
         fname = '%s.%s' % (fprefix, fext)
 
         full = os.path.join(path, fname)
