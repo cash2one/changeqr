@@ -33,8 +33,12 @@
 			{% if audio %}
 			<div class="audio_show">
 				<div class="play_div clearfix">
-					<img src="{% static "wap/images/btn_play_sound.png" %}" class="play" style="display: block;">
-					<img src="{% static "wap/images/btn_pause_sound.png" %}" class="pause" style="display: none;">
+					<span style="display: block;" class="play_block">
+						<img src="{% static "wap/images/btn_play_sound.png" %}" class="play" >
+					</span>
+					<span  style="display: none;" class="pause_block">
+						<img src="{% static "wap/images/btn_pause_sound.png" %}" class="pause">
+					</span>
 					<audio src="{{MEDIA_URL}}{{ audio.url }}" id="audio" onplaying="on_audio_play();" onpause="on_audio_ready();" onended="on_audio_ready();" onerror="on_audio_ready();" style="display:none;">
 						你的浏览器不支持音频播放，请使用UC等主流浏览器播放！
 					</audio>
@@ -68,13 +72,13 @@
 	</div>
 	<script>
 	function on_audio_play() {
-	    $(".play").hide();
-	    $(".pause").show();
+	    $(".play_block").css('display','none');
+	    $(".pause_block").css('display','block');
 	};
 
 	function on_audio_ready() {
-	    $(".play").show();
-	    $(".pause").hide();
+	    $(".play_block").css('display','block');
+	    $(".pause_block").css('display','none');
 	};
 	 //退出页面时停止音频播放
 	function unload() {
@@ -85,11 +89,11 @@
 	$(document).ready(function() {
 	    var audio = document.getElementById("audio");
 	    if (audio != null) {
-	        $(".pause").on('click', function() {
+	        $(".pause_block").on('click', function() {
 	            audio.pause();
 	            on_audio_ready();
 	        });
-	        $(".play").on('click', function() {
+	        $(".play_block").on('click', function() {
 	            audio.play();
 	            on_audio_play();
 	        });
