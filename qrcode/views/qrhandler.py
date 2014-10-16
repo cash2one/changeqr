@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Hollay.Yan
 # @Date:   2014-10-09 10:59:35
-# @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-15 14:44:20
+# @Last Modified by:   hollay
+# @Last Modified time: 2014-10-16 16:17:39
 
 # 需要在 __init__.py 中执行 from qrhandler import *， 否则handler无法被注册
 
@@ -70,6 +70,7 @@ def save_interactive(message, content):
         media.confirmed = True
         media.save()
 
+
 def print_interactive(message, content, media=''):
     '''
     打印交互信息
@@ -91,7 +92,8 @@ def print_interactive(message, content, media=''):
 @handler.register('event')
 class QrcodeHandler(BaseHandler):
 
-    _pattern = re.compile(r'^%s([a-zA-Z0-9]{20})$' % settings.API_URL.replace('/', '\/').replace('.', '\.'))
+    _pattern = re.compile(
+        r'^%s([a-zA-Z0-9]{20})$' % settings.API_URL.replace('/', '\/').replace('.', '\.'))
 
     def handle(self, message):
         if not message.event == 'scancode_waitmsg':
@@ -111,7 +113,8 @@ class TextQrcodeHandler(BaseHandler):
     media_type = 0
     '''
 
-    _pattern = re.compile(r'^%s([a-zA-Z0-9]{20})$' % settings.API_URL.replace('/', '\/').replace('.', '\.'))
+    _pattern = re.compile(
+        r'^%s([a-zA-Z0-9]{20})$' % settings.API_URL.replace('/', '\/').replace('.', '\.'))
 
     def handle(self, message):
         match = self._pattern.match(message.content)
@@ -132,7 +135,8 @@ class TextQrcodeHandler(BaseHandler):
                     content.last_media = None
                     content.save()
                 else:
-                    media = content.codemedia_set.filter(confirmed=False).first()
+                    media = content.codemedia_set.filter(
+                        confirmed=False).first()
                     if media:
                         media.delete()
 
@@ -150,7 +154,7 @@ class TextQrcodeHandler(BaseHandler):
             content.save()
 
             content.qrcode.status = 2
-            content.used_at = datetime.now()
+            content.qrcode.used_at = datetime.now()
             content.qrcode.save()
 
             # 推送消息到消息队列，完成图片、音频、视频下载
@@ -300,18 +304,27 @@ class VideoHandler(BaseHandler):
 
 
 @handler.register('event')
-class SubscribeHandler(BaseHandler):
+class MenuHandler(BaseHandler):
+
     '''
     关注公众号事件响应
     点击帮助事件
     '''
+
     def handle(self, message):
-        if message.event == 'subscribe':
-            return message.wechat.reply_text(MSG['menu'])
+        logger.info('Event triggered, event: %s, key: %s' %
+                    (message.event, message.eventkey))
+        try:
+            if message.event == 'subscribe':
+                return message.wechat.reply_text(MSG['menu'])
 
-        if message.event == 'click' and message.eventkey == 'help':
-            return message.wechat.reply_text(MSG['menu'])
+            if message.event == 'click' and message.eventkey == 'help':
+                return message.wechat.reply_text(MSG['menu'])
+        except Exception, e:
+            logger.error(e)
+            return message.wechat.reply_text('Hello')
 
+        return message.wechat.reply_text('World')
 
 
 @handler.register('video', level=1)
