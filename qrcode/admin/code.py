@@ -3,9 +3,11 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-14 22:54:32
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-16 16:09:23
+# @Last Modified time: 2014-10-16 16:38:55
 
 from django.contrib import admin
+
+from qrcode.models import Qrcode
 
 from datetime import datetime
 
@@ -27,11 +29,25 @@ code_active.short_description = u'激活选中的 二维码'
 code_frozen.short_description = u'冻结选中的 二维码'
 
 
+def prefix_active(self, request, queryset):
+    '''
+    激活所有前缀的 二维码
+    '''
+
+    for prefix in queryset.all():
+        Qrcode.objects.filter(prefix=prefix.code, status=0).update(
+            status=1, active_at=datetime.now())
+
+prefix_active.short_description = u'激活前缀对应的所有 二维码'
+
+
 class QrprefixAdmin(admin.ModelAdmin):
     list_filter = ()
-    list_display = ('title', 'code')
+    list_display = ('code', 'title')
     search_fields = ('title', 'code')
     list_per_page = 20
+
+    actions = [prefix_active]
 
 
 class QrcodeAdmin(admin.ModelAdmin):
