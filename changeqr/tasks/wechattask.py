@@ -3,12 +3,13 @@
 # @Author: hollay
 # @Date:   2014-10-10 21:58:26
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-10 23:26:11
+# @Last Modified time: 2014-10-16 12:57:24
 
 import logging
 import uuid
 import os
 from datetime import datetime
+import subprocess
 
 from django_rq import job
 from django.conf import settings
@@ -18,6 +19,15 @@ from changeqr.wechat.wechat import Wechat
 
 
 logger = logging.getLogger('tasks')
+
+CONVERT_CMD = 'ffmpeg -i %s -b 8k -ar 44100 %s'
+
+
+def voice_transcode(src, dest):
+    '''
+    从 amr 格式转化为 mp3 格式
+    '''
+    subprocess.Popen(CONVERT_CMD % (src, dest), shell=True)
 
 
 @job
@@ -50,7 +60,10 @@ def download_media(content_id):
         if not os.path.exists(path):
             os.makedirs(path)
 
-        fname = '%s.%s' % (uuid.uuid1(), media.ext_name())
+        fprefix = uuid.uuid1()
+        fext = media.ext_name
+        fname = '%s.%s' % (fprefix, fext)
+
         full = os.path.join(path, fname)
 
         try:
@@ -59,6 +72,12 @@ def download_media(content_id):
                 fp.write(ret.content)
 
             logger.info('File saved to %s' % full)
+
+            if fext == 'amr':
+                fnew = '%s.mp3' % fprefix
+                full_new = os.path.join(path, fnew)
+                voice_transcode(full, full_new)
+                fname = fnew
 
             media.url = os.path.join(subpath, fname)
 
