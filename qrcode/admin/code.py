@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-14 22:54:32
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-16 16:38:55
+# @Last Modified time: 2014-10-17 16:06:03
 
 from django.contrib import admin
 
@@ -52,7 +52,7 @@ class QrprefixAdmin(admin.ModelAdmin):
 
 class QrcodeAdmin(admin.ModelAdmin):
     list_filter = ('ctype', 'status',)
-    list_display = ('full', 'prefix', 'status', 'visit_count',)
+    list_display = ('full', 'prefix', 'remark', 'status', 'visit_count',)
     search_fields = ('prefix', )
     list_per_page = 50
 

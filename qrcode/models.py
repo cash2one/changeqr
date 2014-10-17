@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Hollay.Yan
 # @Date:   2014-10-08 19:25:40
-# @Last Modified by:   Hollay.Yan
-# @Last Modified time: 2014-10-15 15:14:45
+# @Last Modified by:   hollay
+# @Last Modified time: 2014-10-17 16:05:30
 
 from django.db import models
 
@@ -121,6 +121,8 @@ class Qrcode(models.Model):
     used_at = models.DateTimeField(blank=True, null=True, verbose_name=u'使用时间')
 
     visit_count = models.IntegerField(default=0, verbose_name=u'访问次数')
+
+    remark = models.CharField(default='', blank=True, max_length=20, null=True, verbose_name=u'备注')
 
     def __unicode__(self):
         return self.full
