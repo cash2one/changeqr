@@ -20,11 +20,16 @@ def wap_media(request, code):
     video = None
     use_time = None
 
+    test = None
+    if code.startswith('test'):
+        test = True
+
     qrcode = Qrcode.objects.filter(full=code).first()
     if not qrcode:
         return render_to_response('wap/media.html', {
+            'test': test,
         },  context_instance=RequestContext(request))
-
+    
     qrcodeContent = CodeContent.objects.filter(qrcode=qrcode).first()
     if qrcodeContent:
         text = qrcodeContent.text
@@ -45,5 +50,6 @@ def wap_media(request, code):
         'imgs': imgs,
         'audio': audio,
         'video': video,
+        'test': test,
         'use_time': use_time,
     },  context_instance=RequestContext(request))
