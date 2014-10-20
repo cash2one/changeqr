@@ -3,7 +3,7 @@
 # @Author: Hollay.Yan
 # @Date:   2014-10-14 22:54:32
 # @Last Modified by:   hollay
-# @Last Modified time: 2014-10-17 16:06:03
+# @Last Modified time: 2014-10-20 13:00:27
 
 from django.contrib import admin
 
@@ -43,8 +43,8 @@ prefix_active.short_description = u'激活前缀对应的所有 二维码'
 
 class QrprefixAdmin(admin.ModelAdmin):
     list_filter = ()
-    list_display = ('code', 'title')
-    search_fields = ('title', 'code')
+    list_display = ('pk', 'code', 'title')
+    search_fields = ('pk', 'title', 'code')
     list_per_page = 20
 
     actions = [prefix_active]
@@ -52,8 +52,8 @@ class QrprefixAdmin(admin.ModelAdmin):
 
 class QrcodeAdmin(admin.ModelAdmin):
     list_filter = ('ctype', 'status',)
-    list_display = ('full', 'prefix', 'remark', 'status', 'visit_count',)
-    search_fields = ('prefix', )
+    list_display = ('pk', 'full', 'prefix', 'remark', 'status', 'visit_count',)
+    search_fields = ('pk', 'prefix', )
     list_per_page = 50
 
     actions = [code_active, code_frozen]
@@ -61,8 +61,8 @@ class QrcodeAdmin(admin.ModelAdmin):
 
 class SubcodeAdmin(admin.ModelAdmin):
     list_filter = ('qrcode', )
-    list_display = ('qrcode', 'postfix', 'full', 'visit_count', )
-    search_fields = ('qrcode', )
+    list_display = ('pk', 'qrcode', 'postfix', 'full', 'visit_count', )
+    search_fields = ('pk', 'qrcode', )
     list_per_page = 50
 
 
